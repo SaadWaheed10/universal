@@ -1,4 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { PlatformPressable } from '@react-navigation/elements';
 import { NavigationContainer, DarkTheme } from '@react-navigation/native';
 import type { LucideIcon } from 'lucide-react-native';
 import { FolderOpen, Inbox, Settings } from 'lucide-react-native';
@@ -67,6 +68,15 @@ export function RootNavigator() {
           tabBarActiveTintColor: colors.accent,
           tabBarInactiveTintColor: colors.textMuted,
           tabBarLabelStyle: styles.tabLabel,
+          // Kill Android's default white ripple ("white ball") on tab press.
+          tabBarButton: props => (
+            <PlatformPressable
+              {...props}
+              pressColor="transparent"
+              pressOpacity={1}
+              android_ripple={null}
+            />
+          ),
         }}>
         <Tab.Screen
           name="Inbox"
