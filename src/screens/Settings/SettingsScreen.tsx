@@ -1,13 +1,18 @@
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { LucideIcon } from 'lucide-react-native';
 import {
   ClipboardCopy,
   Download,
+  RotateCcw,
   ShieldCheck,
   Trash2,
 } from 'lucide-react-native';
-import { Text, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 import { useScaledStyles, ri } from 'react-native-pixelflow';
 import { AppText, Icon, Screen } from '../../components';
+import type { RootStackParamList } from '../../navigation/types';
+import { resetOnboarding } from '../../services/onboardingStorage';
 import { colors } from '../../theme/colors';
 import { createSettingsScreenStyles } from './SettingsScreen.styles';
 
@@ -15,6 +20,7 @@ const ROWS: Array<{
   label: string;
   value: string;
   icon: LucideIcon;
+  onPress?: () => void;
 }> = [
   { label: 'Clipboard watch', value: 'Coming soon', icon: ClipboardCopy },
   { label: 'Privacy', value: 'Local only', icon: ShieldCheck },
@@ -24,6 +30,31 @@ const ROWS: Array<{
 
 export function SettingsScreen() {
   const styles = useScaledStyles(createSettingsScreenStyles);
+  const navigation = useNavigation();
+
+  const replayOnboarding = () => {
+    Alert.alert(
+      'Replay onboarding?',
+      'You will see the intro screens again on the next step.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Replay',
+          onPress: async () => {
+            await resetOnboarding();
+            const root =
+              navigation.getParent<
+                NativeStackNavigationProp<RootStackParamList>
+              >();
+            root?.reset({
+              index: 0,
+              routes: [{ name: 'Onboarding' }],
+            });
+          },
+        },
+      ],
+    );
+  };
 
   return (
     <Screen>
@@ -52,6 +83,23 @@ export function SettingsScreen() {
           </View>
         ))}
       </View>
+
+      <Pressable onPress={replayOnboarding} style={styles.group}>
+        <View style={[styles.row, styles.rowLast]}>
+          <View style={styles.rowLeft}>
+            <View style={styles.rowIcon}>
+              <Icon
+                icon={RotateCcw}
+                size={ri(16)}
+                color={colors.accentWarm}
+                strokeWidth={2}
+              />
+            </View>
+            <Text style={styles.rowLabel}>Replay onboarding</Text>
+          </View>
+          <Text style={styles.rowValue}>Reset</Text>
+        </View>
+      </Pressable>
 
       <AppText variant="caption" style={styles.footer}>
         Universal stays on-device for now. Sync lands later when we grow.

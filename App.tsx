@@ -9,7 +9,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PixelFlowProvider } from 'react-native-pixelflow';
 import { hideSplash } from 'react-native-splash-view';
-import { RootNavigator } from './src/navigation';
+import { AppNavigator } from './src/navigation';
 import { colors, universalTheme } from './src/theme';
 
 function App() {
@@ -25,7 +25,7 @@ function App() {
       <SafeAreaProvider>
         <PixelFlowProvider theme={universalTheme}>
           <StatusBar barStyle="light-content" />
-          <RootNavigator />
+          <AppNavigator />
         </PixelFlowProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
