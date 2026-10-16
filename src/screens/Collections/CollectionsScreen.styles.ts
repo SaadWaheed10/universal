@@ -3,7 +3,13 @@ import { colors } from '../../theme/colors';
 
 export const createCollectionsScreenStyles = () => ({
   header: {
+    ...flex.between,
+    alignItems: 'flex-end' as const,
     marginBottom: rp(18),
+  },
+  headerCopy: {
+    flex: 1,
+    paddingRight: rp(12),
   },
   eyebrow: {
     color: colors.accentSecondary,
@@ -14,10 +20,29 @@ export const createCollectionsScreenStyles = () => ({
     textTransform: 'uppercase' as const,
     marginBottom: rp(6),
   },
+  createRow: {
+    ...flex.row,
+    gap: rp(10),
+    marginBottom: rp(16),
+    alignItems: 'center' as const,
+  },
+  input: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    borderRadius: rr(14),
+    paddingHorizontal: rp(14),
+    paddingVertical: rp(12),
+    color: colors.textPrimary,
+    fontSize: rf(14),
+    lineHeight: rl(20),
+  },
   grid: {
     ...flex.row,
     flexWrap: 'wrap' as const,
     gap: rp(12),
+    paddingBottom: rp(28),
   },
   card: {
     width: rw(43.5),

@@ -25,8 +25,12 @@ export interface DownloadItem {
   /** Placeholder or local/remote preview for grid tiles. */
   thumbnail?: string;
   host: string;
-  /** Local file URI after download (Phase 2). */
+  /** Local cache file path after download. */
   localUri?: string;
+  /** Photos / Gallery asset URI after save (best for playback). */
+  galleryUri?: string;
+  /** Hint for UI — set at download time. */
+  mediaKind?: 'video' | 'photo';
   /** True once written to Photos (iOS) / Gallery (Android). */
   savedToGallery: boolean;
   collectionIds: string[];

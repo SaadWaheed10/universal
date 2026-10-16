@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Download, Plus } from 'lucide-react-native';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useScaledStyles, ri } from 'react-native-pixelflow';
 import {
@@ -13,7 +13,8 @@ import {
 } from '../../components';
 import { useAccountMode } from '../../hooks';
 import type { RootStackParamList } from '../../navigation/types';
-import { useAppSelector } from '../../store/hooks';
+import { removeDownloadItem } from '../../store/downloadsSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { colors } from '../../theme/colors';
 import { createDownloadsScreenStyles } from './DownloadsScreen.styles';
 
@@ -21,18 +22,39 @@ export function DownloadsScreen() {
   const styles = useScaledStyles(createDownloadsScreenStyles);
   const { ready, isGuest, hasLibrary } = useAccountMode();
   const navigation = useNavigation();
+  const dispatch = useAppDispatch();
   const items = useAppSelector(state => state.downloads.items);
 
+  const rootNav = () =>
+    navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
+
   const openAddDownload = () => {
-    const root =
-      navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
-    root?.navigate('AddDownload');
+    rootNav()?.navigate('AddDownload');
   };
 
   const openSignUp = () => {
-    const root =
-      navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
-    root?.navigate('SignUp');
+    rootNav()?.navigate('SignUp');
+  };
+
+  const openDetail = (id: string) => {
+    rootNav()?.navigate('DownloadDetail', { id });
+  };
+
+  const confirmRemove = (id: string, title: string) => {
+    Alert.alert(
+      'Remove from library?',
+      `"${title}" will leave Universal. The file in Photos / Gallery stays.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Remove',
+          style: 'destructive',
+          onPress: () => {
+            dispatch(removeDownloadItem(id));
+          },
+        },
+      ],
+    );
   };
 
   return (
@@ -47,7 +69,7 @@ export function DownloadsScreen() {
             <Text style={styles.modeBadge}>
               {isGuest
                 ? 'Guest · files go to Photos / Gallery only'
-                : 'Account · in-app grid archive'}
+                : 'Account · tap a tile · long-press to remove'}
             </Text>
           ) : null}
         </View>
@@ -95,7 +117,11 @@ export function DownloadsScreen() {
           <Text style={styles.guestNote}>
             {items.length} saved · also in Photos / Gallery
           </Text>
-          <MediaGrid items={items} />
+          <MediaGrid
+            items={items}
+            onPressItem={item => openDetail(item.id)}
+            onLongPressItem={item => confirmRemove(item.id, item.title)}
+          />
         </ScrollView>
       )}
     </Screen>

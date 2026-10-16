@@ -4,11 +4,14 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { AddDownloadScreen } from '../screens/AddDownload';
 import { SignInScreen, SignUpScreen } from '../screens/Auth';
+import { CollectionDetailScreen } from '../screens/CollectionDetail';
+import { DownloadDetailScreen } from '../screens/DownloadDetail';
 import { OnboardingScreen } from '../screens/Onboarding';
 import { WelcomeScreen } from '../screens/Welcome';
 import { getHasOnboarded } from '../services/onboardingStorage';
-import { useAppDispatch } from '../store/hooks';
+import { hydrateCollections } from '../store/collectionsSlice';
 import { hydrateDownloads } from '../store/downloadsSlice';
+import { useAppDispatch } from '../store/hooks';
 import { colors } from '../theme/colors';
 import { MainTabsNavigator } from './MainTabsNavigator';
 import type { RootStackParamList } from './types';
@@ -36,7 +39,10 @@ export function AppNavigator() {
     let mounted = true;
     (async () => {
       const done = await getHasOnboarded();
-      await dispatch(hydrateDownloads());
+      await Promise.all([
+        dispatch(hydrateDownloads()),
+        dispatch(hydrateCollections()),
+      ]);
       if (mounted) {
         setHasOnboardedState(done);
         setReady(true);
@@ -79,6 +85,16 @@ export function AppNavigator() {
           name="AddDownload"
           component={AddDownloadScreen}
           options={{ animation: 'slide_from_bottom', presentation: 'modal' }}
+        />
+        <Stack.Screen
+          name="DownloadDetail"
+          component={DownloadDetailScreen}
+          options={{ animation: 'slide_from_right' }}
+        />
+        <Stack.Screen
+          name="CollectionDetail"
+          component={CollectionDetailScreen}
+          options={{ animation: 'slide_from_right' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

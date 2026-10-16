@@ -1,3 +1,4 @@
+export type { Collection } from './collection';
 export type {
   DownloadItem,
   DownloadStatus,

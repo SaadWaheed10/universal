@@ -78,6 +78,8 @@ export async function runDownloadPipeline(
     thumbnail: resolved.thumbnail,
     host: getHost(resolved.cleanedUrl),
     localUri: saved.localFilePath,
+    galleryUri: saved.galleryUri,
+    mediaKind: saved.kind,
     savedToGallery: true,
     collectionIds: [],
     createdAt: new Date().toISOString(),

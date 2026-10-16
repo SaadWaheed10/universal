@@ -39,12 +39,14 @@
 - Registered: persist metadata in Redux Toolkit + AsyncStorage for grid
 - Native: CameraRoll, BlobUtil, Clipboard; Info.plist + Android storage/media permissions
 
-### Phase 3 — Library — NEXT
-- Registered Instagram-style grid (polish)
-- Collections / folders
-- Delete from app (gallery copy may remain)
+### Phase 3 — Library — DONE
+- Registered Instagram-style grid with thumbnails / fallback tiles
+- Download detail: tap to play video in-app, open link, assign collections, remove from library
+- Long-press remove on grid
+- Collections CRUD (create, open, delete) + assign from detail
+- Gallery copies are never deleted by the app
 
-### Phase 4 — Polish
+### Phase 4 — Polish — NEXT
 - Share sheet → app, retries, quality options
 - Clear data, privacy toggles, clipboard watch on/off
 

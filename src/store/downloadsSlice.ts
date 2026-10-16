@@ -62,6 +62,37 @@ export const clearDownloadLibrary = createAsyncThunk(
   },
 );
 
+export const setDownloadCollections = createAsyncThunk(
+  'downloads/setCollections',
+  async (
+    payload: { id: string; collectionIds: string[] },
+    { getState },
+  ) => {
+    const state = getState() as { downloads: DownloadsState };
+    const next = state.downloads.items.map(item =>
+      item.id === payload.id
+        ? { ...item, collectionIds: payload.collectionIds }
+        : item,
+    );
+    await persist(next);
+    return next;
+  },
+);
+
+/** Drop a deleted collection id from every download. */
+export const detachCollectionFromDownloads = createAsyncThunk(
+  'downloads/detachCollection',
+  async (collectionId: string, { getState }) => {
+    const state = getState() as { downloads: DownloadsState };
+    const next = state.downloads.items.map(item => ({
+      ...item,
+      collectionIds: item.collectionIds.filter(id => id !== collectionId),
+    }));
+    await persist(next);
+    return next;
+  },
+);
+
 const downloadsSlice = createSlice({
   name: 'downloads',
   initialState,
@@ -83,6 +114,12 @@ const downloadsSlice = createSlice({
         state.items = action.payload;
       })
       .addCase(clearDownloadLibrary.fulfilled, (state, action) => {
+        state.items = action.payload;
+      })
+      .addCase(setDownloadCollections.fulfilled, (state, action) => {
+        state.items = action.payload;
+      })
+      .addCase(detachCollectionFromDownloads.fulfilled, (state, action) => {
         state.items = action.payload;
       });
   },

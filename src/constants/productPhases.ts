@@ -20,8 +20,8 @@ export type ProductPhase = {
   status: ProductPhaseStatus;
 };
 
-/** Next engineering focus after Phase 2 download core. */
-export const CURRENT_PRODUCT_PHASE_ID: ProductPhaseId = '3';
+/** Next engineering focus after Phase 3 library. */
+export const CURRENT_PRODUCT_PHASE_ID: ProductPhaseId = '4';
 
 export const PRODUCT_PHASES: ProductPhase[] = [
   {
@@ -52,13 +52,13 @@ export const PRODUCT_PHASES: ProductPhase[] = [
     id: '3',
     title: 'Library',
     summary: 'Registered media grid, collections, delete',
-    status: 'current',
+    status: 'done',
   },
   {
     id: '4',
     title: 'Polish',
     summary: 'Share intake, retries, privacy toggles',
-    status: 'upcoming',
+    status: 'current',
   },
   {
     id: '5',

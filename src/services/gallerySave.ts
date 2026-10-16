@@ -20,6 +20,7 @@ export type DownloadFileOptions = {
 
 /**
  * Download a remote media file and save it to Photos (iOS) / Gallery (Android).
+ * Also keeps a persistent copy under Documents for in-app playback.
  */
 export async function downloadAndSaveToGallery(
   options: DownloadFileOptions,
@@ -30,9 +31,14 @@ export async function downloadAndSaveToGallery(
   const headKind = guessMediaKind(sourceUrl);
   const ext = extensionForMedia(headKind, undefined, sourceUrl);
   const filename = `universal-${Date.now()}.${ext}`;
-  const path = `${ReactNativeBlobUtil.fs.dirs.CacheDir}/${filename}`;
+  const cachePath = `${ReactNativeBlobUtil.fs.dirs.CacheDir}/${filename}`;
 
-  const response = await fetchWithHeaders(sourceUrl, headers, path, onProgress);
+  const response = await fetchWithHeaders(
+    sourceUrl,
+    headers,
+    cachePath,
+    onProgress,
+  );
   const status = response.info().status;
   if (status < 200 || status >= 300) {
     if (status === 403 || status === 401) {
@@ -50,10 +56,36 @@ export async function downloadAndSaveToGallery(
       '',
   );
   const kind = guessMediaKind(sourceUrl, contentType);
-  const filePath = response.path();
-  const fileUri = filePath.startsWith('file://')
-    ? filePath
-    : `file://${filePath}`;
+  const downloadedPath = response.path();
+
+  // Keep a durable copy for in-app playback (cache can be wiped by iOS).
+  const mediaDir = `${ReactNativeBlobUtil.fs.dirs.DocumentDir}/UniversalMedia`;
+  try {
+    const exists = await ReactNativeBlobUtil.fs.isDir(mediaDir);
+    if (!exists) {
+      await ReactNativeBlobUtil.fs.mkdir(mediaDir);
+    }
+  } catch {
+    // Directory may already exist.
+  }
+
+  const persistentPath = `${mediaDir}/${filename}`;
+  try {
+    const already = await ReactNativeBlobUtil.fs.exists(persistentPath);
+    if (!already) {
+      await ReactNativeBlobUtil.fs.cp(downloadedPath, persistentPath);
+    }
+  } catch {
+    // Fall back to the downloaded cache path if copy fails.
+  }
+
+  const playablePath = (await ReactNativeBlobUtil.fs.exists(persistentPath))
+    ? persistentPath
+    : downloadedPath;
+
+  const fileUri = playablePath.startsWith('file://')
+    ? playablePath
+    : `file://${playablePath}`;
 
   const asset = await CameraRoll.saveAsset(fileUri, {
     type: kind,
@@ -61,7 +93,7 @@ export async function downloadAndSaveToGallery(
   });
 
   return {
-    localFilePath: filePath,
+    localFilePath: playablePath,
     galleryUri: asset.node.image.uri,
     kind,
   };

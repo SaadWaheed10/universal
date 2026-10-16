@@ -11,4 +11,6 @@ export type RootStackParamList = {
   SignIn: undefined;
   MainTabs: undefined;
   AddDownload: undefined;
+  DownloadDetail: { id: string };
+  CollectionDetail: { id: string };
 };
