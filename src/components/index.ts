@@ -5,4 +5,5 @@ export { Chip } from './Chip';
 export { EmptyState } from './EmptyState';
 export { Icon } from './Icon';
 export { LinkCard } from './LinkCard';
+export { MediaGrid } from './MediaGrid';
 export { Screen } from './Screen';

@@ -28,7 +28,7 @@ export function SignInScreen({ navigation }: Props) {
   };
 
   return (
-    <Screen>
+    <Screen scroll>
       <Pressable onPress={() => navigation.goBack()} hitSlop={12}>
         <Text style={styles.back}>Back</Text>
       </Pressable>
@@ -36,8 +36,8 @@ export function SignInScreen({ navigation }: Props) {
       <View style={styles.header}>
         <Text style={styles.title}>Welcome back</Text>
         <Text style={styles.subtitle}>
-          Sign in to pick up where you left off. Full auth lands later — this is
-          a local shell for now.
+          Sign in for your in-app download archive. Full auth lands later —
+          this is a local shell for now.
         </Text>
       </View>
 
@@ -52,6 +52,8 @@ export function SignInScreen({ navigation }: Props) {
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
+          returnKeyType="next"
+          blurOnSubmit={false}
         />
       </View>
 
@@ -64,6 +66,8 @@ export function SignInScreen({ navigation }: Props) {
           placeholderTextColor={colors.textMuted}
           style={styles.input}
           secureTextEntry
+          returnKeyType="done"
+          onSubmitEditing={finish}
         />
       </View>
 

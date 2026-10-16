@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Download } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { Link2 } from 'lucide-react-native';
 import { useScaledStyles, ri } from 'react-native-pixelflow';
 import { AppButton, Icon, Screen } from '../../components';
 import type { RootStackParamList } from '../../navigation/types';
@@ -36,14 +36,19 @@ export function WelcomeScreen({ navigation }: Props) {
             end={{ x: 1, y: 1 }}
             style={styles.markGradient}
           />
-          <Icon icon={Link2} size={ri(28)} color={colors.bg} strokeWidth={2.2} />
+          <Icon
+            icon={Download}
+            size={ri(28)}
+            color={colors.bg}
+            strokeWidth={2.2}
+          />
         </View>
 
         <Text style={styles.brand}>Universal</Text>
-        <Text style={styles.title}>Ready when you are</Text>
+        <Text style={styles.title}>Paste. Download. Keep.</Text>
         <Text style={styles.body}>
-          Sign in, create an account, or jump straight in — Universal works
-          either way.
+          Create an account for an in-app grid of everything you save — or
+          continue as a guest and send files straight to Photos / Gallery.
         </Text>
 
         <View style={styles.actions}>

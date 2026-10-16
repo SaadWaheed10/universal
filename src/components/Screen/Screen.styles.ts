@@ -6,11 +6,17 @@ export const createScreenStyles = () => ({
     flex: 1,
     backgroundColor: colors.bg,
   },
+  flex: {
+    flex: 1,
+  },
   content: {
     flex: 1,
     paddingHorizontal: rp(20),
   },
   contentNoPad: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
 });

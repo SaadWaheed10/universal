@@ -1,13 +1,13 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { PlatformPressable } from '@react-navigation/elements';
 import type { LucideIcon } from 'lucide-react-native';
-import { FolderOpen, Inbox, Settings } from 'lucide-react-native';
+import { Download, FolderOpen, Settings } from 'lucide-react-native';
 import { View } from 'react-native';
 import { useScaledStyles, ri } from 'react-native-pixelflow';
 import { Icon } from '../components';
 import {
   CollectionsScreen,
-  InboxScreen,
+  DownloadsScreen,
   SettingsScreen,
 } from '../screens';
 import { colors } from '../theme/colors';
@@ -64,11 +64,15 @@ export function MainTabsNavigator() {
         ),
       }}>
       <Tab.Screen
-        name="Inbox"
-        component={InboxScreen}
+        name="Downloads"
+        component={DownloadsScreen}
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} accent={colors.accent} glyph={Inbox} />
+            <TabIcon
+              focused={focused}
+              accent={colors.accent}
+              glyph={Download}
+            />
           ),
         }}
       />

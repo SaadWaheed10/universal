@@ -1,1 +1,5 @@
-export type { LinkStatus, SavedLink, SocialPlatform } from './link';
+export type {
+  DownloadItem,
+  DownloadStatus,
+  SocialPlatform,
+} from './download';

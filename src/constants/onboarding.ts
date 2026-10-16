@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react-native';
-import { FolderOpen, Link2, Sparkles } from 'lucide-react-native';
+import { Download, Images, Sparkles } from 'lucide-react-native';
 
 export type OnboardingSlide = {
   id: string;
@@ -10,21 +10,21 @@ export type OnboardingSlide = {
 
 export const ONBOARDING_SLIDES: OnboardingSlide[] = [
   {
-    id: 'capture',
-    title: 'Drop any link.',
-    body: 'Copy from Instagram, TikTok, X, YouTube, and more — Universal catches it.',
-    icon: Link2,
-  },
-  {
-    id: 'clean',
-    title: 'We clean the noise.',
-    body: 'Tracking junk stripped. Previews ready. One calm inbox for everything you save.',
+    id: 'paste',
+    title: 'Paste any social link.',
+    body: 'Copy from Instagram, TikTok, X, YouTube, and more — drop it into Universal.',
     icon: Sparkles,
   },
   {
-    id: 'keep',
-    title: 'Find it when you need it.',
-    body: 'Collections, notes, and later queues — your links stay organized, not lost.',
-    icon: FolderOpen,
+    id: 'download',
+    title: 'Download in one tap.',
+    body: 'We pull the media and save it straight to your Photos on iOS or Gallery on Android.',
+    icon: Download,
+  },
+  {
+    id: 'library',
+    title: 'Keep a real archive.',
+    body: 'Guests save to the device gallery only. Create an account for an Instagram-style grid of everything you downloaded.',
+    icon: Images,
   },
 ];

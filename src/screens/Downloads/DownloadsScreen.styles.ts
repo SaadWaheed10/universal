@@ -1,7 +1,7 @@
 import { flex, rf, rl, rp, rr } from 'react-native-pixelflow';
 import { colors } from '../../theme/colors';
 
-export const createInboxScreenStyles = () => ({
+export const createDownloadsScreenStyles = () => ({
   header: {
     ...flex.between,
     alignItems: 'flex-end' as const,
@@ -20,6 +20,13 @@ export const createInboxScreenStyles = () => ({
     textTransform: 'uppercase' as const,
     marginBottom: rp(6),
   },
+  modeBadge: {
+    color: colors.textMuted,
+    fontSize: rf(12),
+    lineHeight: rl(16),
+    fontWeight: '500' as const,
+    marginTop: rp(4),
+  },
   addButton: {
     width: rp(44),
     height: rp(44),
@@ -36,11 +43,15 @@ export const createInboxScreenStyles = () => ({
       left: 0,
     } as const),
   },
-  list: {
-    gap: rp(12),
-    paddingBottom: rp(28),
-  },
   emptyWrap: {
     flex: 1,
+  },
+  guestNote: {
+    marginTop: rp(12),
+    marginBottom: rp(8),
+    color: colors.textSecondary,
+    fontSize: rf(13),
+    lineHeight: rl(18),
+    fontWeight: '500' as const,
   },
 });

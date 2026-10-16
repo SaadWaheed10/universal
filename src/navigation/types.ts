@@ -1,5 +1,5 @@
 export type RootTabParamList = {
-  Inbox: undefined;
+  Downloads: undefined;
   Collections: undefined;
   Settings: undefined;
 };

@@ -7,30 +7,47 @@ import {
   RotateCcw,
   ShieldCheck,
   Trash2,
+  UserRound,
 } from 'lucide-react-native';
 import { Alert, Pressable, Text, View } from 'react-native';
 import { useScaledStyles, ri } from 'react-native-pixelflow';
 import { AppText, Icon, Screen } from '../../components';
+import { getCurrentProductPhase } from '../../constants/productPhases';
+import { useAccountMode } from '../../hooks';
 import type { RootStackParamList } from '../../navigation/types';
 import { resetOnboarding } from '../../services/onboardingStorage';
 import { colors } from '../../theme/colors';
 import { createSettingsScreenStyles } from './SettingsScreen.styles';
 
-const ROWS: Array<{
-  label: string;
-  value: string;
-  icon: LucideIcon;
-  onPress?: () => void;
-}> = [
-  { label: 'Clipboard watch', value: 'Coming soon', icon: ClipboardCopy },
-  { label: 'Privacy', value: 'Local only', icon: ShieldCheck },
-  { label: 'Export', value: 'Coming soon', icon: Download },
-  { label: 'Clear data', value: '—', icon: Trash2 },
-];
-
 export function SettingsScreen() {
   const styles = useScaledStyles(createSettingsScreenStyles);
   const navigation = useNavigation();
+  const { ready, isGuest } = useAccountMode();
+  const phase = getCurrentProductPhase();
+
+  const rows: Array<{
+    label: string;
+    value: string;
+    icon: LucideIcon;
+  }> = [
+    {
+      label: 'Account',
+      value: ready ? (isGuest ? 'Guest' : 'Registered') : '…',
+      icon: UserRound,
+    },
+    {
+      label: 'Product phase',
+      value: `${phase.id} · ${phase.title}`,
+      icon: Download,
+    },
+    { label: 'Clipboard watch', value: 'Coming soon', icon: ClipboardCopy },
+    {
+      label: 'Privacy',
+      value: 'On-device + gallery',
+      icon: ShieldCheck,
+    },
+    { label: 'Clear data', value: '—', icon: Trash2 },
+  ];
 
   const replayOnboarding = () => {
     Alert.alert(
@@ -64,10 +81,10 @@ export function SettingsScreen() {
       </View>
 
       <View style={styles.group}>
-        {ROWS.map((row, index) => (
+        {rows.map((row, index) => (
           <View
             key={row.label}
-            style={[styles.row, index === ROWS.length - 1 && styles.rowLast]}>
+            style={[styles.row, index === rows.length - 1 && styles.rowLast]}>
             <View style={styles.rowLeft}>
               <View style={styles.rowIcon}>
                 <Icon
@@ -102,7 +119,8 @@ export function SettingsScreen() {
       </Pressable>
 
       <AppText variant="caption" style={styles.footer}>
-        Universal stays on-device for now. Sync lands later when we grow.
+        Guest saves go to Photos / Gallery only. Accounts unlock the in-app
+        grid. Full download pipeline is Phase 2 (iOS + Android).
       </AppText>
     </Screen>
   );

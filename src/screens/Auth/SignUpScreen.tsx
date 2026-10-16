@@ -29,7 +29,7 @@ export function SignUpScreen({ navigation }: Props) {
   };
 
   return (
-    <Screen>
+    <Screen scroll>
       <Pressable onPress={() => navigation.goBack()} hitSlop={12}>
         <Text style={styles.back}>Back</Text>
       </Pressable>
@@ -37,7 +37,8 @@ export function SignUpScreen({ navigation }: Props) {
       <View style={styles.header}>
         <Text style={styles.title}>Create account</Text>
         <Text style={styles.subtitle}>
-          A light welcome for now — full auth and sync land later.
+          Unlock your in-app download grid. Full auth and sync land later —
+          this is a local shell for now.
         </Text>
       </View>
 
@@ -50,6 +51,8 @@ export function SignUpScreen({ navigation }: Props) {
           placeholderTextColor={colors.textMuted}
           style={styles.input}
           autoCapitalize="words"
+          returnKeyType="next"
+          blurOnSubmit={false}
         />
       </View>
 
@@ -64,6 +67,8 @@ export function SignUpScreen({ navigation }: Props) {
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
+          returnKeyType="next"
+          blurOnSubmit={false}
         />
       </View>
 
@@ -76,6 +81,8 @@ export function SignUpScreen({ navigation }: Props) {
           placeholderTextColor={colors.textMuted}
           style={styles.input}
           secureTextEntry
+          returnKeyType="done"
+          onSubmitEditing={finish}
         />
       </View>
 
