@@ -57,6 +57,25 @@ export const createSettingsScreenStyles = () => ({
     fontSize: rf(13),
     lineHeight: rl(18),
     fontWeight: '500' as const,
+    marginLeft: rp(8),
+    flexShrink: 0,
+  },
+  rowTextCol: {
+    flexShrink: 1,
+    gap: rp(2),
+  },
+  rowHint: {
+    color: colors.textMuted,
+    fontSize: rf(11),
+    lineHeight: rl(15),
+    fontWeight: '400' as const,
+    maxWidth: rp(200),
+  },
+  qualityWrap: {
+    ...flex.row,
+    flexWrap: 'wrap' as const,
+    gap: rp(8),
+    marginBottom: rp(8),
   },
   footer: {
     marginTop: rp(8),

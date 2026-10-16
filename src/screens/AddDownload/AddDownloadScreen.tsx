@@ -12,18 +12,28 @@ import {
 } from '../../services/downloadPipeline';
 import { getIsGuest } from '../../services/onboardingStorage';
 import { addDownloadItem } from '../../store/downloadsSlice';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setVideoQuality } from '../../store/settingsSlice';
 import { colors } from '../../theme/colors';
+import { VIDEO_QUALITY_OPTIONS, type VideoQuality } from '../../types/settings';
 import { detectPlatform } from '../../utils/platformDetect';
+import {
+  extractHttpUrl,
+  looksLikeDownloadableLink,
+} from '../../utils/shareIntake';
 import { isValidHttpUrl } from '../../utils/url';
 import { createAddDownloadScreenStyles } from './AddDownloadScreen.styles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AddDownload'>;
 
-export function AddDownloadScreen({ navigation }: Props) {
+export function AddDownloadScreen({ navigation, route }: Props) {
   const styles = useScaledStyles(createAddDownloadScreenStyles);
   const dispatch = useAppDispatch();
-  const [url, setUrl] = useState('');
+  const videoQuality = useAppSelector(state => state.settings.videoQuality);
+  const autoRetryEnabled = useAppSelector(
+    state => state.settings.autoRetryEnabled,
+  );
+  const [url, setUrl] = useState(route.params?.initialUrl?.trim() ?? '');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -35,20 +45,30 @@ export function AddDownloadScreen({ navigation }: Props) {
   );
 
   useEffect(() => {
+    const incoming = route.params?.initialUrl?.trim();
+    if (incoming) {
+      setUrl(incoming);
+      setError(null);
+      setSuccess(null);
+    }
+  }, [route.params?.initialUrl]);
+
+  useEffect(() => {
+    if (route.params?.initialUrl) {
+      return;
+    }
     let mounted = true;
     (async () => {
       try {
         const clip = await Clipboard.getString();
+        const found = extractHttpUrl(clip ?? '');
         if (
           mounted &&
           !url &&
-          clip &&
-          isValidHttpUrl(clip) &&
-          /instagram|tiktok|youtube|youtu\.be|twitter|x\.com|facebook|reddit|threads|linkedin|\.(mp4|mov|jpg|png|webp)/i.test(
-            clip,
-          )
+          found &&
+          looksLikeDownloadableLink(found)
         ) {
-          setUrl(clip.trim());
+          setUrl(found);
         }
       } catch {
         // Clipboard may be empty / denied — ignore.
@@ -57,18 +77,19 @@ export function AddDownloadScreen({ navigation }: Props) {
     return () => {
       mounted = false;
     };
-    // Prefill once on mount.
+    // Prefill once on mount when no deep-link URL.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const pasteFromClipboard = async () => {
     try {
       const clip = await Clipboard.getString();
-      if (!clip?.trim()) {
+      const found = extractHttpUrl(clip ?? '') ?? clip?.trim();
+      if (!found) {
         Alert.alert('Clipboard empty', 'Copy a link first, then paste here.');
         return;
       }
-      setUrl(clip.trim());
+      setUrl(found);
       setError(null);
       setSuccess(null);
     } catch {
@@ -96,6 +117,8 @@ export function AddDownloadScreen({ navigation }: Props) {
       const result = await runDownloadPipeline({
         rawUrl: url,
         persistInLibrary: !isGuest,
+        videoQuality,
+        maxAttempts: autoRetryEnabled ? 3 : 1,
         onProgress: setProgress,
       });
 
@@ -127,6 +150,16 @@ export function AddDownloadScreen({ navigation }: Props) {
       setBusy(false);
     }
   };
+
+  const onQuality = (value: VideoQuality) => {
+    void dispatch(setVideoQuality(value));
+  };
+
+  const primaryLabel = busy
+    ? 'Working…'
+    : error
+      ? 'Retry download'
+      : 'Download & save';
 
   return (
     <Screen scroll>
@@ -162,6 +195,20 @@ export function AddDownloadScreen({ navigation }: Props) {
         />
       </View>
 
+      <View style={styles.field}>
+        <Text style={styles.label}>Quality</Text>
+        <View style={styles.qualityRow}>
+          {VIDEO_QUALITY_OPTIONS.map(option => (
+            <Chip
+              key={option.value}
+              label={option.label}
+              selected={videoQuality === option.value}
+              onPress={() => onQuality(option.value)}
+            />
+          ))}
+        </View>
+      </View>
+
       {platform ? (
         <View style={styles.platformRow}>
           <Chip
@@ -177,7 +224,10 @@ export function AddDownloadScreen({ navigation }: Props) {
           <Text style={styles.progressLabel}>{progress.message}</Text>
           <View style={styles.track}>
             <View
-              style={[styles.fill, { width: `${Math.round(progress.ratio * 100)}%` }]}
+              style={[
+                styles.fill,
+                { width: `${Math.round(progress.ratio * 100)}%` },
+              ]}
             />
           </View>
         </View>
@@ -188,7 +238,7 @@ export function AddDownloadScreen({ navigation }: Props) {
 
       <View style={styles.actions}>
         <AppButton
-          label={busy ? 'Working…' : 'Download & save'}
+          label={primaryLabel}
           onPress={startDownload}
           disabled={busy}
         />
@@ -202,7 +252,8 @@ export function AddDownloadScreen({ navigation }: Props) {
 
       <Text style={styles.note}>
         Social links need a Cobalt API (Settings → Cobalt API). Direct .mp4 /
-        image URLs work without it. We never fetch blocked social CDN links.
+        image URLs work without it. Auto-retry is{' '}
+        {autoRetryEnabled ? 'on' : 'off'} in Settings.
       </Text>
     </Screen>
   );

@@ -20,8 +20,8 @@ export type ProductPhase = {
   status: ProductPhaseStatus;
 };
 
-/** Next engineering focus after Phase 3 library. */
-export const CURRENT_PRODUCT_PHASE_ID: ProductPhaseId = '4';
+/** Next engineering focus after Phase 4 polish. */
+export const CURRENT_PRODUCT_PHASE_ID: ProductPhaseId = '5';
 
 export const PRODUCT_PHASES: ProductPhase[] = [
   {
@@ -58,13 +58,13 @@ export const PRODUCT_PHASES: ProductPhase[] = [
     id: '4',
     title: 'Polish',
     summary: 'Share intake, retries, privacy toggles',
-    status: 'current',
+    status: 'done',
   },
   {
     id: '5',
     title: 'Accounts',
     summary: 'Real auth and library sync',
-    status: 'upcoming',
+    status: 'current',
   },
 ];
 

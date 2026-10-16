@@ -50,6 +50,11 @@ export const createAddDownloadScreenStyles = () => ({
     lineHeight: rl(22),
     textAlignVertical: 'top' as const,
   },
+  qualityRow: {
+    ...flex.row,
+    flexWrap: 'wrap' as const,
+    gap: rp(8),
+  },
   platformRow: {
     ...flex.row,
     alignItems: 'center' as const,

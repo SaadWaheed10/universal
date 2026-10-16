@@ -1,4 +1,5 @@
 import type { SocialPlatform } from '../types';
+import type { VideoQuality } from '../types/settings';
 import { detectPlatform } from '../utils/platformDetect';
 import {
   cleanUrl,
@@ -24,15 +25,23 @@ const BROWSER_UA =
 const SOCIAL_CDN_HINT =
   /cdninstagram|fbcdn|tiktokcdn|ttvnw|googlevideo|twimg\.com|video\.twimg/i;
 
+export type ResolveMediaOptions = {
+  videoQuality?: VideoQuality;
+};
+
 /**
  * Resolve a pasted link into a downloadable media URL.
  * Social pages need a Cobalt tunnel (alwaysProxy). We never download
  * raw social CDN URLs — those return HTTP 403 from the app.
  */
-export async function resolveMedia(rawUrl: string): Promise<ResolvedMedia> {
+export async function resolveMedia(
+  rawUrl: string,
+  options: ResolveMediaOptions = {},
+): Promise<ResolvedMedia> {
   const cleanedUrl = cleanUrl(rawUrl);
   const platform = detectPlatform(cleanedUrl);
   const downloadHeaders = buildDownloadHeaders(cleanedUrl, platform);
+  const videoQuality = options.videoQuality ?? '1080';
 
   if (isDirectMediaUrl(cleanedUrl) && !SOCIAL_CDN_HINT.test(cleanedUrl)) {
     return {
@@ -52,7 +61,12 @@ export async function resolveMedia(rawUrl: string): Promise<ResolvedMedia> {
     );
   }
 
-  const fromCobalt = await resolveWithCobalt(cobaltBase, cleanedUrl, platform);
+  const fromCobalt = await resolveWithCobalt(
+    cobaltBase,
+    cleanedUrl,
+    platform,
+    videoQuality,
+  );
   if (fromCobalt) {
     return fromCobalt;
   }
@@ -116,6 +130,7 @@ async function resolveWithCobalt(
   cobaltBase: string,
   pageUrl: string,
   platform: SocialPlatform,
+  videoQuality: VideoQuality,
 ): Promise<ResolvedMedia | null> {
   const response = await fetch(cobaltBase, {
     method: 'POST',
@@ -128,7 +143,7 @@ async function resolveWithCobalt(
       downloadMode: 'auto',
       // Critical: tunnel through Cobalt instead of returning CDN redirect (403).
       alwaysProxy: true,
-      videoQuality: '1080',
+      videoQuality,
       filenameStyle: 'basic',
     }),
   });

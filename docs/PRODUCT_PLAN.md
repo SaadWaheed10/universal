@@ -46,11 +46,14 @@
 - Collections CRUD (create, open, delete) + assign from detail
 - Gallery copies are never deleted by the app
 
-### Phase 4 — Polish — NEXT
-- Share sheet → app, retries, quality options
-- Clear data, privacy toggles, clipboard watch on/off
+### Phase 4 — Polish — DONE
+- Android share sheet → Add Download (`ACTION_SEND` + `universal://add`)
+- Clipboard watch on resume (Settings toggle)
+- Auto-retry (up to 2) + manual Retry on failure
+- Quality options (360 / 720 / 1080 / max) for Cobalt
+- Clear library + collections + local playback files (gallery untouched)
 
-### Phase 5 — Accounts
+### Phase 5 — Accounts — NEXT
 - Real auth so registered library can sync across devices
 
 ## Out of scope until later

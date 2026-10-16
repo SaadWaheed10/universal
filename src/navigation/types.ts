@@ -10,7 +10,7 @@ export type RootStackParamList = {
   SignUp: undefined;
   SignIn: undefined;
   MainTabs: undefined;
-  AddDownload: undefined;
+  AddDownload: { initialUrl?: string } | undefined;
   DownloadDetail: { id: string };
   CollectionDetail: { id: string };
 };

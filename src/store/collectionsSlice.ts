@@ -85,6 +85,14 @@ export const deleteCollection = createAsyncThunk(
   },
 );
 
+export const clearCollections = createAsyncThunk(
+  'collections/clearAll',
+  async () => {
+    await AsyncStorage.removeItem(STORAGE_KEY);
+    return [] as Collection[];
+  },
+);
+
 const collectionsSlice = createSlice({
   name: 'collections',
   initialState,
@@ -107,6 +115,9 @@ const collectionsSlice = createSlice({
       })
       .addCase(deleteCollection.fulfilled, (state, action) => {
         state.items = action.payload.collections;
+      })
+      .addCase(clearCollections.fulfilled, (state, action) => {
+        state.items = action.payload;
       });
   },
 });

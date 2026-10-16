@@ -13,6 +13,10 @@ export const createChipStyles = () => ({
     borderWidth: 1,
     borderColor: colors.borderSubtle,
   },
+  rootSelected: {
+    borderColor: colors.accent,
+    backgroundColor: colors.accentMuted,
+  },
   pip: {
     width: rp(6),
     height: rp(6),
