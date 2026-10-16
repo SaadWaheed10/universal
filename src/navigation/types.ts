@@ -10,4 +10,5 @@ export type RootStackParamList = {
   SignUp: undefined;
   SignIn: undefined;
   MainTabs: undefined;
+  AddDownload: undefined;
 };

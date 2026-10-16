@@ -1,3 +1,4 @@
+export { AddDownloadScreen } from './AddDownload';
 export { SignInScreen, SignUpScreen } from './Auth';
 export { CollectionsScreen } from './Collections';
 export { DownloadsScreen } from './Downloads';

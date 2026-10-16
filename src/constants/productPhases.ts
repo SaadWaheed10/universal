@@ -20,9 +20,8 @@ export type ProductPhase = {
   status: ProductPhaseStatus;
 };
 
-/** Active engineering phase — bump when a phase ships. */
-/** Next engineering focus after Phase 1 pivot shipped. */
-export const CURRENT_PRODUCT_PHASE_ID: ProductPhaseId = '2';
+/** Next engineering focus after Phase 2 download core. */
+export const CURRENT_PRODUCT_PHASE_ID: ProductPhaseId = '3';
 
 export const PRODUCT_PHASES: ProductPhase[] = [
   {
@@ -47,13 +46,13 @@ export const PRODUCT_PHASES: ProductPhase[] = [
     id: '2',
     title: 'Download core',
     summary: 'Paste → download → save to Gallery / Photos (iOS + Android)',
-    status: 'current',
+    status: 'done',
   },
   {
     id: '3',
     title: 'Library',
     summary: 'Registered media grid, collections, delete',
-    status: 'upcoming',
+    status: 'current',
   },
   {
     id: '4',

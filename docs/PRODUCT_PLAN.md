@@ -30,14 +30,16 @@
 - iOS + Android UI only (no real download pipeline yet)
 - Plan mirror: `docs/PRODUCT_PLAN.md` + `src/constants/productPhases.ts` (Settings shows current phase)
 
-### Phase 2 — Download core — NEXT
-- Paste / clipboard → platform detect
-- Resolve media → download file → save to Photos (iOS) / Gallery (Android)
+### Phase 2 — Download core — DONE
+- Paste / clipboard → platform detect (`AddDownload` modal)
+- Resolve media (direct URL, or Cobalt tunnel with `alwaysProxy`) → download → Photos / Gallery
+- Social CDN direct fetches are blocked (403) — requires your own Cobalt API URL in Settings
 - Permissions, progress, success / failure
 - Guest: write to gallery only; do not keep rich in-app history
-- Registered: persist metadata + thumbnails for grid
+- Registered: persist metadata in Redux Toolkit + AsyncStorage for grid
+- Native: CameraRoll, BlobUtil, Clipboard; Info.plist + Android storage/media permissions
 
-### Phase 3 — Library
+### Phase 3 — Library — NEXT
 - Registered Instagram-style grid (polish)
 - Collections / folders
 - Delete from app (gallery copy may remain)

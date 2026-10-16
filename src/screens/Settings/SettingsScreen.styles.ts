@@ -61,4 +61,32 @@ export const createSettingsScreenStyles = () => ({
   footer: {
     marginTop: rp(8),
   },
+  sectionLabel: {
+    color: colors.textMuted,
+    fontSize: rf(12),
+    lineHeight: rl(16),
+    fontWeight: '600' as const,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase' as const,
+    marginBottom: rp(8),
+    marginTop: rp(4),
+  },
+  input: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    borderRadius: rr(14),
+    paddingHorizontal: rp(16),
+    paddingVertical: rp(14),
+    color: colors.textPrimary,
+    fontSize: rf(14),
+    lineHeight: rl(20),
+    marginBottom: rp(10),
+  },
+  helper: {
+    color: colors.textMuted,
+    fontSize: rf(12),
+    lineHeight: rl(18),
+    marginBottom: rp(16),
+  },
 });

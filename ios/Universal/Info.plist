@@ -33,6 +33,10 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Universal saves downloaded videos and photos to your library.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Universal needs photo library access to save downloads to Photos.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>RCTNewArchEnabled</key>

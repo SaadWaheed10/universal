@@ -9,26 +9,65 @@ import {
   Trash2,
   UserRound,
 } from 'lucide-react-native';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Alert, Pressable, Text, TextInput, View } from 'react-native';
 import { useScaledStyles, ri } from 'react-native-pixelflow';
-import { AppText, Icon, Screen } from '../../components';
+import { AppButton, AppText, Icon, Screen } from '../../components';
 import { getCurrentProductPhase } from '../../constants/productPhases';
 import { useAccountMode } from '../../hooks';
 import type { RootStackParamList } from '../../navigation/types';
+import {
+  getCobaltApiBase,
+  setCobaltApiBase,
+} from '../../services/cobaltConfig';
 import { resetOnboarding } from '../../services/onboardingStorage';
+import { clearDownloadLibrary } from '../../store/downloadsSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { colors } from '../../theme/colors';
 import { createSettingsScreenStyles } from './SettingsScreen.styles';
 
 export function SettingsScreen() {
   const styles = useScaledStyles(createSettingsScreenStyles);
   const navigation = useNavigation();
+  const dispatch = useAppDispatch();
   const { ready, isGuest } = useAccountMode();
   const phase = getCurrentProductPhase();
+  const itemCount = useAppSelector(state => state.downloads.items.length);
+  const [cobaltUrl, setCobaltUrl] = useState('');
+  const [cobaltSaved, setCobaltSaved] = useState(false);
+
+  useEffect(() => {
+    getCobaltApiBase().then(setCobaltUrl);
+  }, []);
+
+  const saveCobalt = async () => {
+    await setCobaltApiBase(cobaltUrl);
+    setCobaltSaved(true);
+    setTimeout(() => setCobaltSaved(false), 1600);
+  };
+
+  const clearData = () => {
+    Alert.alert(
+      'Clear in-app library?',
+      'Removes saved items from Universal. Files already in Photos / Gallery stay on the device.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Clear',
+          style: 'destructive',
+          onPress: () => {
+            dispatch(clearDownloadLibrary());
+          },
+        },
+      ],
+    );
+  };
 
   const rows: Array<{
     label: string;
     value: string;
     icon: LucideIcon;
+    onPress?: () => void;
   }> = [
     {
       label: 'Account',
@@ -46,7 +85,12 @@ export function SettingsScreen() {
       value: 'On-device + gallery',
       icon: ShieldCheck,
     },
-    { label: 'Clear data', value: '—', icon: Trash2 },
+    {
+      label: 'Clear library',
+      value: itemCount > 0 ? `${itemCount} items` : '—',
+      icon: Trash2,
+      onPress: clearData,
+    },
   ];
 
   const replayOnboarding = () => {
@@ -74,32 +118,68 @@ export function SettingsScreen() {
   };
 
   return (
-    <Screen>
+    <Screen scroll>
       <View style={styles.header}>
         <Text style={styles.eyebrow}>Preferences</Text>
         <AppText variant="title">Settings</AppText>
       </View>
 
       <View style={styles.group}>
-        {rows.map((row, index) => (
-          <View
-            key={row.label}
-            style={[styles.row, index === rows.length - 1 && styles.rowLast]}>
-            <View style={styles.rowLeft}>
-              <View style={styles.rowIcon}>
-                <Icon
-                  icon={row.icon}
-                  size={ri(16)}
-                  color={colors.accent}
-                  strokeWidth={2}
-                />
+        {rows.map((row, index) => {
+          const rowStyle = [
+            styles.row,
+            index === rows.length - 1 && styles.rowLast,
+          ];
+          const content = (
+            <>
+              <View style={styles.rowLeft}>
+                <View style={styles.rowIcon}>
+                  <Icon
+                    icon={row.icon}
+                    size={ri(16)}
+                    color={colors.accent}
+                    strokeWidth={2}
+                  />
+                </View>
+                <Text style={styles.rowLabel}>{row.label}</Text>
               </View>
-              <Text style={styles.rowLabel}>{row.label}</Text>
+              <Text style={styles.rowValue}>{row.value}</Text>
+            </>
+          );
+
+          return row.onPress ? (
+            <Pressable key={row.label} onPress={row.onPress} style={rowStyle}>
+              {content}
+            </Pressable>
+          ) : (
+            <View key={row.label} style={rowStyle}>
+              {content}
             </View>
-            <Text style={styles.rowValue}>{row.value}</Text>
-          </View>
-        ))}
+          );
+        })}
       </View>
+
+      <Text style={styles.sectionLabel}>Cobalt API</Text>
+      <TextInput
+        value={cobaltUrl}
+        onChangeText={setCobaltUrl}
+        placeholder="https://your-cobalt-instance/"
+        placeholderTextColor={colors.textMuted}
+        style={styles.input}
+        autoCapitalize="none"
+        autoCorrect={false}
+        keyboardType="url"
+      />
+      <AppButton
+        label={cobaltSaved ? 'Saved' : 'Save Cobalt API URL'}
+        variant="secondary"
+        onPress={saveCobalt}
+      />
+      <Text style={styles.helper}>
+        Required for Instagram / TikTok / YouTube / X. Official cobalt.tools
+        blocks third-party apps — host your own Cobalt instance and paste the
+        API base URL here.
+      </Text>
 
       <Pressable onPress={replayOnboarding} style={styles.group}>
         <View style={[styles.row, styles.rowLast]}>
@@ -119,8 +199,7 @@ export function SettingsScreen() {
       </Pressable>
 
       <AppText variant="caption" style={styles.footer}>
-        Guest saves go to Photos / Gallery only. Accounts unlock the in-app
-        grid. Full download pipeline is Phase 2 (iOS + Android).
+        Guest saves go to Photos / Gallery only. Accounts keep an in-app grid.
       </AppText>
     </Screen>
   );

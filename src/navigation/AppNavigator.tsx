@@ -2,10 +2,13 @@ import { NavigationContainer, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
+import { AddDownloadScreen } from '../screens/AddDownload';
 import { SignInScreen, SignUpScreen } from '../screens/Auth';
 import { OnboardingScreen } from '../screens/Onboarding';
 import { WelcomeScreen } from '../screens/Welcome';
 import { getHasOnboarded } from '../services/onboardingStorage';
+import { useAppDispatch } from '../store/hooks';
+import { hydrateDownloads } from '../store/downloadsSlice';
 import { colors } from '../theme/colors';
 import { MainTabsNavigator } from './MainTabsNavigator';
 import type { RootStackParamList } from './types';
@@ -25,6 +28,7 @@ const navTheme = {
 };
 
 export function AppNavigator() {
+  const dispatch = useAppDispatch();
   const [ready, setReady] = useState(false);
   const [hasOnboarded, setHasOnboardedState] = useState(false);
 
@@ -32,6 +36,7 @@ export function AppNavigator() {
     let mounted = true;
     (async () => {
       const done = await getHasOnboarded();
+      await dispatch(hydrateDownloads());
       if (mounted) {
         setHasOnboardedState(done);
         setReady(true);
@@ -40,7 +45,7 @@ export function AppNavigator() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [dispatch]);
 
   if (!ready) {
     return (
@@ -70,6 +75,11 @@ export function AppNavigator() {
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="SignIn" component={SignInScreen} />
         <Stack.Screen name="MainTabs" component={MainTabsNavigator} />
+        <Stack.Screen
+          name="AddDownload"
+          component={AddDownloadScreen}
+          options={{ animation: 'slide_from_bottom', presentation: 'modal' }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,7 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Download, Plus } from 'lucide-react-native';
-import { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useScaledStyles, ri } from 'react-native-pixelflow';
@@ -12,9 +11,9 @@ import {
   MediaGrid,
   Screen,
 } from '../../components';
-import { MOCK_DOWNLOADS } from '../../data/mockDownloads';
 import { useAccountMode } from '../../hooks';
 import type { RootStackParamList } from '../../navigation/types';
+import { useAppSelector } from '../../store/hooks';
 import { colors } from '../../theme/colors';
 import { createDownloadsScreenStyles } from './DownloadsScreen.styles';
 
@@ -22,8 +21,13 @@ export function DownloadsScreen() {
   const styles = useScaledStyles(createDownloadsScreenStyles);
   const { ready, isGuest, hasLibrary } = useAccountMode();
   const navigation = useNavigation();
-  const [showMocks, setShowMocks] = useState(true);
-  const items = showMocks && hasLibrary ? MOCK_DOWNLOADS : [];
+  const items = useAppSelector(state => state.downloads.items);
+
+  const openAddDownload = () => {
+    const root =
+      navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
+    root?.navigate('AddDownload');
+  };
 
   const openSignUp = () => {
     const root =
@@ -50,11 +54,7 @@ export function DownloadsScreen() {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Add download"
-          onPress={() => {
-            if (hasLibrary) {
-              setShowMocks(prev => !prev);
-            }
-          }}
+          onPress={openAddDownload}
           style={styles.addButton}>
           <LinearGradient
             colors={[colors.accent, colors.accentSecondary]}
@@ -74,6 +74,7 @@ export function DownloadsScreen() {
             subtitle="As a guest, downloads go straight to Photos (iOS) or Gallery (Android). Create an account to keep an Instagram-style grid inside the app."
             icon={Download}
             primaryLabel="Paste a link"
+            onPrimaryPress={openAddDownload}
             secondaryLabel="Create account for library"
             onSecondaryPress={openSignUp}
           />
@@ -86,14 +87,13 @@ export function DownloadsScreen() {
             subtitle="Paste a social link — we download it, save it to your gallery, and keep it in this archive."
             icon={Download}
             primaryLabel="Paste a link"
-            secondaryLabel="Show demo grid"
-            onSecondaryPress={() => setShowMocks(true)}
+            onPrimaryPress={openAddDownload}
           />
         </View>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false}>
           <Text style={styles.guestNote}>
-            Demo grid · real downloads land in Phase 2 (iOS + Android).
+            {items.length} saved · also in Photos / Gallery
           </Text>
           <MediaGrid items={items} />
         </ScrollView>
